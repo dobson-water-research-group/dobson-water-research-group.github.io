@@ -19,7 +19,10 @@
     <aside class="sidebar">
       <div class="sidebar-top">
         <a class="brand" href="/">
-          <img src="/assets/img/logo.svg" alt="" width="30" height="38">
+          <picture>
+            <source srcset="/assets/img/logo-still.svg" media="(prefers-reduced-motion: reduce)">
+            <img src="/assets/img/logo.svg" alt="" width="21" height="28">
+          </picture>
           <span>{{ site.title }}</span>
         </a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="side-nav">Menu</button>

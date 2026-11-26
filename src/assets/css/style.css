@@ -76,7 +76,9 @@ code { font-family: var(--mono); font-size: 85%; background: var(--bg-subtle); p
 .sidebar-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
 .brand { display: inline-flex; align-items: center; gap: 0.55rem; color: var(--text); font-weight: 600; font-size: 1.1rem; }
 .brand:hover { text-decoration: none; color: var(--accent); }
-.brand img { image-rendering: pixelated; }
+/* The logo is pixel art on a 21x28 grid, shown at 1.5x (3 screen pixels per grid pixel on high-DPI screens). */
+.brand picture { display: contents; }
+.brand img { width: 31.5px; height: 42px; flex: none; image-rendering: pixelated; }
 .sidebar-tagline { color: var(--muted); font-size: 0.875rem; margin: 0; }
 .side-nav ul { list-style: none; margin: 0; padding: 0; }
 .side-nav li + li { margin-top: 0.1rem; }
