@@ -13,7 +13,7 @@ day to pick up new publications and close adverts whose deadline has passed.
 | Add a project | `src/_data/projects.yaml` (the Projects page is hidden for now: remove `hidden: true` from `src/projects.njk` and add it back to `navigation.yaml`) |
 | Add software | `src/_data/software.yaml` (each tool gets its own page and a sidebar link) |
 | Change the home page text or research themes | `src/index.md` |
-| Update the Impact page | `src/impact.md` |
+| Update the Impact page | `src/_data/impact.yaml` |
 | Advertise a position | copy `src/opportunities/wisgov-phd.md` to a new file in that folder |
 | Hide or add a publication | `src/_data/publications_settings.yaml` |
 | Change the group name, contact details, application form or mailing list | `src/_data/site.yaml` |

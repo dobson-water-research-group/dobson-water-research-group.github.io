@@ -1,0 +1,28 @@
+---
+layout: layouts/page.njk
+title: Impact
+intro: How the group's models and research are used beyond universities.
+permalink: /impact/
+---
+{#- The content is in src/_data/impact.yaml. #}
+{%- for group in impact %}
+<h2>{{ group.section }}</h2>
+{%- if group.intro %}<p class="muted">{{ group.intro }}:</p>{% endif %}
+{%- if group.compact %}
+<ul class="impact-compact">
+  {%- for item in group.items %}
+  <li><a href="{{ item.url }}">{{ item.title }}</a> ({{ item.when }}), {{ item.text | mdInline | safe }}</li>
+  {%- endfor %}
+</ul>
+{%- else %}
+<ul class="entries impact">
+  {%- for item in group.items %}
+  <li>
+    <p class="entry-title">{% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}</p>
+    <div class="entry-text">{{ item.text | md | safe }}</div>
+    <p class="entry-sub small">{{ item.when }}{% if item.who %} · {{ item.who }}{% endif %}</p>
+  </li>
+  {%- endfor %}
+</ul>
+{%- endif %}
+{%- endfor %}

@@ -136,6 +136,10 @@ h2 + .entries { border-top: 0; }
 .entry-title { font-size: 1.1rem; font-weight: 600; margin: 0 0 0.15rem; }
 .entry-title .pill { margin-left: 0.4rem; }
 .entry-sub { color: var(--muted); margin: 0; }
+.entry-text { max-width: 46rem; }
+.entry-text p { margin: 0.2rem 0 0.35rem; }
+.impact > li { padding: 0.9rem 0; }
+.impact-compact { margin: 0 0 2rem; }
 
 /* ---------- Software / repo-style page ---------- */
 .repo { display: grid; grid-template-columns: minmax(0, 1fr) 16rem; gap: 2.5rem; align-items: start; }
