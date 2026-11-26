@@ -2,6 +2,8 @@
 layout: layouts/page.njk
 title: Projects
 permalink: /projects/
+# Hidden for now. To bring the page back, delete this line and add Projects to navigation.yaml.
+hidden: true
 ---
 {%- for status in ["active", "completed"] %}
 {%- set group = projects | where("status", status) %}

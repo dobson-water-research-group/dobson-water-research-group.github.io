@@ -41,7 +41,9 @@ export default function (eleventyConfig) {
   eleventyConfig.addWatchTarget("src/assets/");
 
   // Files with `draft: true` show up in `npm start` but are left out of the published site.
+  // Files with `hidden: true` are left out everywhere.
   eleventyConfig.addPreprocessor("drafts", "*", (data) => {
+    if (data.hidden) return false;
     if (data.draft && process.env.ELEVENTY_RUN_MODE === "build") return false;
   });
 

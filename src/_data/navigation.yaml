@@ -3,8 +3,6 @@
 - title: Software
   url: /software/
   children: software # lists each tool from software.yaml underneath
-- title: Projects
-  url: /projects/
 - title: People
   url: /people/
 - title: Publications

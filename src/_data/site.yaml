@@ -8,13 +8,13 @@ description: >-
   and quality.
 
 # Public address of the site, used for social-media link previews. Change this if you use a custom domain.
-url: https://barneydobson.github.io
+url: https://dobson-water-research-group.github.io
 
 institution: Trinity College Dublin
 department: Department of Civil, Structural & Environmental Engineering
 address: Museum Building, Trinity College Dublin, Dublin 2, Ireland
 email: bdobson@tcd.ie
-github: https://github.com/barneydobson # TODO: change to the organisation's page if you create one
+github: https://github.com/dobson-water-research-group
 
 # Mailing list for the Opportunities page. Until form_action is set, the page shows a
 # "coming soon" note with the email address above instead of a form.

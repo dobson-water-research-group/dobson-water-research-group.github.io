@@ -16,7 +16,7 @@
 
   <form class="apply-form" action="{{ apply.form_action }}" method="POST" enctype="multipart/form-data"
         data-closes="{{ deadline | closesAt }}" data-max-mb="{{ apply.max_file_mb or 5 }}">
-    <p>Fill in your details and attach your CV and cover letter. You can check everything before it's emailed to {{ apply.email }}.</p>
+    <p>Fill in your details and attach your CV and cover letter.</p>
 
     {#- Settings for FormSubmit. Field names are used as labels in the email. #}
     {%- set subject = (short_title or title) + " application" %}
@@ -41,11 +41,13 @@
         </label>
       </div>
       {%- if start_options %}
-      <fieldset class="choices">
-        <legend>When could you start?</legend>
+      <fieldset class="choices" data-start>
+        <legend>When could you start? <span class="optional">Tick all that apply</span></legend>
         {%- for option in start_options %}
-        <label class="choice"><input type="radio" name="Preferred start" value="{{ option }}" required> {{ option }}</label>
+        <label class="choice"><input type="checkbox" value="{{ option }}"> {{ option }}</label>
         {%- endfor %}
+        {#- The ticked dates are sent as one line, e.g. "March 2027, September 2027". #}
+        <input type="hidden" name="Could start" data-preview>
       </fieldset>
       {%- endif %}
     </fieldset>
@@ -136,6 +138,19 @@
 
     form.elements._next.value = `${location.origin}${location.pathname}?sent=1#apply`;
 
+    // Start dates: at least one must be ticked. The ticked dates go into one hidden field.
+    const startGroup = form.querySelector("[data-start]");
+    if (startGroup) {
+      const boxes = [...startGroup.querySelectorAll('input[type="checkbox"]')];
+      const syncStart = () => {
+        const ticked = boxes.filter((box) => box.checked).map((box) => box.value);
+        startGroup.querySelector("[data-preview]").value = ticked.join(", ");
+        boxes[0].setCustomValidity(ticked.length ? "" : "Please tick at least one start date.");
+      };
+      boxes.forEach((box) => box.addEventListener("change", syncStart));
+      syncStart();
+    }
+
     // Check each file as soon as it's chosen.
     fileInputs.forEach((input) => {
       input.addEventListener("change", () => {
@@ -167,7 +182,8 @@
       previewUrls.splice(0).forEach((url) => URL.revokeObjectURL(url));
 
       for (const el of form.elements) {
-        if (!el.name || el.name.startsWith("_") || ["hidden", "file", "checkbox", "fieldset"].includes(el.type)) continue;
+        if (!el.name || el.name.startsWith("_") || ["file", "checkbox", "fieldset"].includes(el.type)) continue;
+        if (el.type === "hidden" && !("preview" in el.dataset)) continue;
         if (el.type === "radio" && !el.checked) continue;
         const row = document.createElement("div");
         const dt = document.createElement("dt");

@@ -1,19 +1,23 @@
 ---
-title: "PhD studentship: integrated water systems modelling (WISGOV)"
+# One advert. Copy this file to advertise another position; the file name becomes the web
+# address (wisgov-phd.md -> /opportunities/wisgov-phd/). The advert moves to "Past positions"
+# once the deadline passes. Add `draft: true` to keep a new advert off the live site while
+# you write it, or `status: closed` to close one early.
+title: "PhD studentship: WISGOV (Water Integration for Systems Governance)"
 position: PhD studentship
 location: Trinity College Dublin
 funding: €25,000 a year for four years, plus fees, a laptop and a travel budget
 start: March 2027 (or September 2027)
 start_options: [March 2027, September 2027] # shown as a question on the application form
 short_title: WISGOV PhD # used in the subject line of application emails
-deadline: 2026-12-16T12:00:00Z # 12 noon, Irish time
+deadline: 2026-12-18T12:00:00Z # 12 noon, Irish time; or just a date, e.g. 2026-12-18, to stay open all day
 supervisors: [Barnaby Dobson, Patrick Morrissey]
 advert_pdf: /assets/docs/wisgov-phd-advert.pdf
 application_form: true
 summary: Build a national water-cycle model for Ireland, and find simple ways to represent karst groundwater in it.
 ---
 
-WISGOV (Water Integration for Systems Governance) is a four-year project funded by the EPA Research
+WISGOV is a four-year project funded by the EPA Research
 Programme 2030. Ireland's water agencies plan for floods, water quality, water supply and farming
 largely separately. WISGOV will build a national integrated water-cycle model for Ireland with
 [WSIMOD](/software/wsimod/), and use it with the EPA, Uisce Éireann, OPW, LAWPRO and DAFM to test
