@@ -12,6 +12,9 @@ layout: layouts/base.njk
     {%- if draft %}<p class="notice">Draft: visible when previewing locally, but not on the live site until you remove <code>draft: true</code>.</p>{% endif %}
     {%- if not isOpenNow %}<p class="notice">This position is now closed.</p>{% endif %}
     {{ content | safe }}
+    {%- if application_form and isOpenNow %}
+    {% include "partials/application-form.njk" %}
+    {%- endif %}
   </article>
   <aside class="job-side">
     <dl class="facts facts-stacked">
@@ -20,7 +23,9 @@ layout: layouts/base.njk
       {%- if deadline %}<div><dt>Deadline</dt><dd>{{ deadline | date }}</dd></div>{% endif %}
       {%- if supervisors %}<div><dt>Supervisors</dt><dd>{{ supervisors | join(", ") }}</dd></div>{% endif %}
     </dl>
-    {%- if apply_url and isOpenNow %}<p><a class="button button-primary" href="{{ apply_url }}">How to apply</a></p>{% endif %}
+    {%- if isOpenNow and application_form %}<p><a class="button button-primary" href="#apply">Apply</a></p>
+    {%- elif isOpenNow and apply_url %}<p><a class="button button-primary" href="{{ apply_url }}">How to apply</a></p>{% endif %}
+    {%- if advert_pdf %}<p><a href="{{ advert_pdf }}">Full advert (PDF)</a></p>{% endif %}
     <p class="muted small">Questions? <a href="mailto:{{ site.email }}?subject={{ title | urlencode }}">Email us</a>.</p>
   </aside>
 </div>

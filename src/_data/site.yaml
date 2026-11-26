@@ -23,3 +23,13 @@ mailing_list:
   form_action: "" # the form's POST address, copied from the provider's embed code
   email_field: email # the name of the email input in the provider's embed code
   privacy_url: "" # link to the provider's privacy policy, or your own
+
+# Application form, shown on adverts that set `application_form: true`. Applicants' details, CV and
+# cover letter are emailed to `email` through FormSubmit (formsubmit.co), a free form-to-email
+# service. Nothing is stored on this website. The README explains the one-time activation step.
+applications:
+  email: bdobson@tcd.ie
+  form_action: https://formsubmit.co/bdobson@tcd.ie # after activation you can swap the address for the random string FormSubmit sends you
+  provider: FormSubmit
+  privacy_url: https://formsubmit.co/privacy.pdf
+  max_file_mb: 5 # per file; FormSubmit limits a whole submission to about 10 MB

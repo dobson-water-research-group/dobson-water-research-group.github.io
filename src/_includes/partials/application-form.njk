@@ -1,0 +1,245 @@
+{#-
+  Application form for an advert with `application_form: true`.
+  It posts to the form service in site.yaml (FormSubmit), which emails the answers, CV and cover
+  letter to site.applications.email. Nothing is stored on the website. The script below checks
+  the files, shows a preview before sending, and shows a thank-you message afterwards.
+-#}
+{%- set apply = site.applications %}
+<section class="apply" id="apply" aria-labelledby="apply-title">
+  <h2 id="apply-title">Apply</h2>
+
+  <div class="notice notice-success" data-apply-sent hidden role="status">
+    <p><strong>Thank you, your application has been sent.</strong></p>
+    <p>You should get a confirmation email shortly. If nothing arrives within a day, please email <a href="mailto:{{ apply.email }}">{{ apply.email }}</a> before the deadline.</p>
+  </div>
+  <p class="notice" data-apply-closed hidden>Applications closed on {{ deadline | date }}.</p>
+
+  <form class="apply-form" action="{{ apply.form_action }}" method="POST" enctype="multipart/form-data"
+        data-closes="{{ deadline | closesAt }}" data-max-mb="{{ apply.max_file_mb or 5 }}">
+    <p>Fill in your details and attach your CV and cover letter. You can check everything before it's emailed to {{ apply.email }}.</p>
+
+    {#- Settings for FormSubmit. Field names are used as labels in the email. #}
+    {%- set subject = (short_title or title) + " application" %}
+    <input type="hidden" name="_subject" value="{{ subject }}" data-base="{{ subject }}">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_next" value="{{ page.url | htmlBaseUrl(site.url) }}?sent=1#apply">
+    <input type="hidden" name="_autoresponse" value="Thank you for your application for “{{ title }}”. This is an automatic confirmation that your application has arrived. A copy of your details is below. Dobson Water Research Group, Trinity College Dublin">
+    <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <input type="hidden" name="Position" value="{{ title }}">
+
+    <fieldset>
+      <legend>About you</legend>
+      <div class="form-grid">
+        <label class="field">Full name
+          <input type="text" name="Name" autocomplete="name" required>
+        </label>
+        <label class="field">Email
+          <input type="email" name="email" data-label="Email" autocomplete="email" required>
+        </label>
+        <label class="field field-wide">Highest degree <span class="hint">Subject, university, and your result or expected result</span>
+          <input type="text" name="Highest degree" required placeholder="e.g. BE Civil Engineering, University of Galway, 2.1 (expected 2026)">
+        </label>
+      </div>
+      {%- if start_options %}
+      <fieldset class="choices">
+        <legend>When could you start?</legend>
+        {%- for option in start_options %}
+        <label class="choice"><input type="radio" name="Preferred start" value="{{ option }}" required> {{ option }}</label>
+        {%- endfor %}
+      </fieldset>
+      {%- endif %}
+    </fieldset>
+
+    <fieldset>
+      <legend>Referees</legend>
+      <p class="hint">Two people who know your academic or research work, such as a lecturer or project supervisor.</p>
+      {%- for n in [1, 2] %}
+      <div class="form-grid referee">
+        <p class="referee-title">Referee {{ n }}</p>
+        <label class="field">Name
+          <input type="text" name="Referee {{ n }} name" autocomplete="off" required>
+        </label>
+        <label class="field">Email
+          <input type="email" name="Referee {{ n }} email" autocomplete="off" required>
+        </label>
+        <label class="field field-wide">Position and how they know you <span class="optional">(optional)</span>
+          <input type="text" name="Referee {{ n }} position" autocomplete="off" placeholder="e.g. Lecturer, University of Galway; supervised my final-year project">
+        </label>
+      </div>
+      {%- endfor %}
+    </fieldset>
+
+    <fieldset>
+      <legend>Documents</legend>
+      <p class="hint">PDF only, up to {{ apply.max_file_mb or 5 }} MB each.</p>
+      <div class="form-grid">
+        <label class="field upload">CV <span class="hint">Your education, results, and any research or programming experience</span>
+          <input type="file" name="CV" data-label="CV" accept=".pdf,application/pdf" required>
+        </label>
+        <label class="field upload">Cover letter <span class="hint">Why this project, and what you'd bring to it</span>
+          <input type="file" name="Cover letter" data-label="Cover letter" accept=".pdf,application/pdf" required>
+        </label>
+      </div>
+    </fieldset>
+
+    <label class="check">
+      <input type="checkbox" name="Consent" value="Yes" required>
+      <span>I agree to my details and documents being emailed to {{ apply.email }} through {% if apply.privacy_url %}<a href="{{ apply.privacy_url }}">{{ apply.provider }}</a>{% else %}{{ apply.provider }}{% endif %}, to assess my application.</span>
+    </label>
+
+    <div class="form-actions">
+      <button type="submit" class="button button-primary">Preview application</button>
+    </div>
+  </form>
+
+  <dialog class="apply-preview" aria-labelledby="preview-title">
+    <h2 id="preview-title">Check your application</h2>
+    <p class="muted small">This is what will be emailed to {{ apply.email }}.</p>
+    <dl class="preview-list" data-preview-fields></dl>
+    <div class="preview-docs" data-preview-docs></div>
+    <p class="muted small">When you press Send, {{ apply.provider }} may ask you to tick a box to show you're not a robot, then bring you back here.</p>
+    <div class="form-actions">
+      <button type="button" class="button" data-preview-back>Back to edit</button>
+      <button type="button" class="button button-primary" data-preview-send>Send application</button>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  (() => {
+    const section = document.getElementById("apply");
+    const form = section.querySelector(".apply-form");
+    const dialog = section.querySelector(".apply-preview");
+    const sendButton = dialog.querySelector("[data-preview-send]");
+    const maxMb = Number(form.dataset.maxMb);
+    const fileInputs = [...form.querySelectorAll('input[type="file"]')];
+    const previewUrls = [];
+    let confirmed = false;
+
+    const size = (bytes) => (bytes < 1048576 ? `${Math.ceil(bytes / 1024)} KB` : `${(bytes / 1048576).toFixed(1)} MB`);
+    const labelOf = (input) => input.dataset.label || input.name;
+
+    // Back from the form service after sending.
+    if (new URLSearchParams(location.search).has("sent")) {
+      form.hidden = true;
+      section.querySelector("[data-apply-sent]").hidden = false;
+      return;
+    }
+
+    // The site only rebuilds once a day, so also close the form at the exact deadline.
+    const closes = Date.parse(form.dataset.closes);
+    if (closes && Date.now() > closes) {
+      form.hidden = true;
+      section.querySelector("[data-apply-closed]").hidden = false;
+      return;
+    }
+
+    form.elements._next.value = `${location.origin}${location.pathname}?sent=1#apply`;
+
+    // Check each file as soon as it's chosen.
+    fileInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        const file = input.files[0];
+        let problem = "";
+        if (file && file.type !== "application/pdf" && !/\.pdf$/i.test(file.name)) {
+          problem = "Please choose a PDF file.";
+        } else if (file && file.size > maxMb * 1048576) {
+          problem = `This file is ${size(file.size)}. Please keep it under ${maxMb} MB.`;
+        }
+        input.setCustomValidity(problem);
+        if (problem) input.reportValidity();
+      });
+    });
+
+    // "Preview application" opens the preview instead of sending. The browser has already
+    // checked the required fields by the time this runs.
+    form.addEventListener("submit", (event) => {
+      if (confirmed) return;
+      event.preventDefault();
+      showPreview();
+    });
+
+    function showPreview() {
+      const fields = dialog.querySelector("[data-preview-fields]");
+      const docs = dialog.querySelector("[data-preview-docs]");
+      fields.replaceChildren();
+      docs.replaceChildren();
+      previewUrls.splice(0).forEach((url) => URL.revokeObjectURL(url));
+
+      for (const el of form.elements) {
+        if (!el.name || el.name.startsWith("_") || ["hidden", "file", "checkbox", "fieldset"].includes(el.type)) continue;
+        if (el.type === "radio" && !el.checked) continue;
+        const row = document.createElement("div");
+        const dt = document.createElement("dt");
+        const dd = document.createElement("dd");
+        dt.textContent = labelOf(el);
+        dd.textContent = el.value.trim() || "Not given";
+        if (!el.value.trim()) dd.className = "muted";
+        row.append(dt, dd);
+        fields.append(row);
+      }
+
+      for (const input of fileInputs) {
+        const file = input.files[0];
+        if (!file) continue;
+        const url = URL.createObjectURL(file);
+        previewUrls.push(url);
+        const figure = document.createElement("figure");
+        const caption = document.createElement("figcaption");
+        const strong = document.createElement("strong");
+        const link = document.createElement("a");
+        strong.textContent = labelOf(input);
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = "Open in a new tab";
+        caption.append(strong, ` · ${file.name} (${size(file.size)}) · `, link);
+        const frame = document.createElement("iframe");
+        frame.src = `${url}#navpanes=0`;
+        frame.title = `${labelOf(input)} preview`;
+        figure.append(caption, frame);
+        docs.append(figure);
+      }
+
+      sendButton.disabled = false;
+      sendButton.textContent = "Send application";
+      dialog.showModal();
+      dialog.scrollTop = 0;
+    }
+
+    dialog.querySelector("[data-preview-back]").addEventListener("click", () => dialog.close());
+
+    sendButton.addEventListener("click", () => {
+      const name = form.elements.Name.value.trim();
+      form.elements._subject.value = `${form.elements._subject.dataset.base}: ${name}`;
+      renameFiles(name);
+      confirmed = true;
+      sendButton.disabled = true;
+      sendButton.textContent = "Sending…";
+      form.submit();
+    });
+
+    // Name the attachments after the applicant, e.g. "Jane Smith - CV.pdf", so they're easy to file.
+    function renameFiles(name) {
+      const clean = name.replace(/[^\p{L}\p{N} .'-]/gu, "").trim() || "Applicant";
+      for (const input of fileInputs) {
+        const file = input.files[0];
+        if (!file) continue;
+        try {
+          const list = new DataTransfer();
+          list.items.add(new File([file], `${clean} - ${labelOf(input)}.pdf`, { type: "application/pdf" }));
+          input.files = list.files;
+        } catch {
+          // Older browsers can't rename files; the original name is fine.
+        }
+      }
+    }
+
+    // If someone comes back to this page with the browser's Back button, let them send again.
+    window.addEventListener("pageshow", () => {
+      confirmed = false;
+      sendButton.disabled = false;
+      sendButton.textContent = "Send application";
+    });
+  })();
+</script>

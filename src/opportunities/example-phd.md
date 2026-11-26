@@ -12,9 +12,13 @@ position: PhD studentship
 location: Trinity College Dublin
 funding: Fully funded for 4 years (fees and stipend)
 start: September 2027
-deadline: 2027-03-31
+deadline: 2027-03-31 # open until the end of this day; or give a time, e.g. 2027-03-31T12:00:00Z
 supervisors: [Barnaby Dobson]
 apply_url: https://www.tcd.ie/courses/postgraduate/ # the link for the "How to apply" button
+# application_form: true # adds an application form that emails applications to you (see README)
+# start_options: [September 2027, January 2028] # optional start-date question on the form
+# short_title: Urban drainage PhD # used in the subject line of application emails
+# advert_pdf: /assets/docs/your-advert.pdf # link to the full advert; put the PDF in src/assets/docs/
 summary: One or two sentences that appear on the Opportunities page.
 ---
 

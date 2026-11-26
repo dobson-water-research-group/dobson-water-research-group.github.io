@@ -13,7 +13,7 @@ day to pick up new publications and close adverts whose deadline has passed.
 | Add a project | `src/_data/projects.yaml` |
 | Add software | `src/_data/software.yaml` (each tool gets its own page and a sidebar link) |
 | Change the home page text or research themes | `src/index.md` |
-| Advertise a position | copy `src/opportunities/example-phd.md` to a new file in that folder |
+| Advertise a position | copy `src/opportunities/example-phd.md` (or `wisgov-phd.md`, which has an application form) to a new file in that folder |
 | Hide or add a publication | `src/_data/publications_settings.yaml` |
 | Change the group name, contact details or mailing list | `src/_data/site.yaml` |
 | Change the menu | `src/_data/navigation.yaml` |
@@ -38,7 +38,31 @@ is up to date.
 
 Each file in `src/opportunities/` is one advert. It's listed under "Open positions" until its
 `deadline` passes, then moves to "Past positions". Set `status: closed` to close it early.
-`draft: true` keeps it off the live site while you work on it.
+`draft: true` keeps it off the live site while you work on it. A deadline can be a date
+(`2027-03-31`, open until the end of that day) or a date and time (`2026-12-16T12:00:00Z`).
+
+### Application form
+
+Set `application_form: true` on an advert to add an application form. Applicants fill in their
+details and two referees, attach a CV and cover letter (PDFs up to 5 MB each), check everything in a
+preview, then send. The form closes itself at the deadline. `src/opportunities/wisgov-phd.md` is a
+working example.
+
+Applications are emailed to `applications.email` in `site.yaml` through
+[FormSubmit](https://formsubmit.co), a free form-to-email service that needs no account. The CV and
+cover letter arrive as attachments named after the applicant. Applicants also get an automatic
+confirmation email. Nothing is stored on the website.
+
+Before the first real application, activate the form once:
+
+1. Once the site is live, submit a test application yourself.
+2. FormSubmit emails `applications.email` an activation link. Click it. Until then, applications
+   aren't forwarded.
+3. Optional: FormSubmit then gives you a random string to use in place of your email address in
+   `form_action`, so the address isn't in the page source.
+
+FormSubmit limits each submission to about 10 MB. If you'd rather use another service (for example
+Basin or Formspree's paid plans, which store uploads), change `form_action` in `site.yaml`.
 
 ## Previewing locally
 

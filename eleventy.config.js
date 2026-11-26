@@ -12,9 +12,22 @@ function toDate(value) {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+// A deadline can be a date (2027-03-31, open until the end of that day) or a date and time
+// (2026-12-16T12:00:00Z, open until that moment).
+function hasTime(value) {
+  if (value instanceof Date) return value.getUTCHours() + value.getUTCMinutes() + value.getUTCSeconds() > 0;
+  return `${value}`.length > 10;
+}
+
+function closesAt(value) {
+  const d = toDate(value);
+  if (!d || hasTime(value) || !(value instanceof Date)) return d;
+  return new Date(d.getTime() + 86_399_000); // 23:59:59 on that day
+}
+
 function isOpen(data) {
   if (data.status === "closed") return false;
-  const deadline = toDate(data.deadline);
+  const deadline = closesAt(data.deadline);
   return !deadline || deadline >= new Date();
 }
 
@@ -43,11 +56,15 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter("isOpen", isOpen);
   eleventyConfig.addFilter("openOnly", (items) => items.filter((item) => isOpen(item.data)));
   eleventyConfig.addFilter("closedOnly", (items) => items.filter((item) => !isOpen(item.data)));
+  eleventyConfig.addFilter("closesAt", (value) => closesAt(value)?.toISOString() ?? "");
   eleventyConfig.addFilter("date", (value, style = "long") => {
     const d = toDate(value);
     if (!d) return value ?? "";
-    const opts = style === "short" ? { month: "short", year: "numeric" } : { day: "numeric", month: "long", year: "numeric" };
-    return d.toLocaleDateString("en-IE", { ...opts, timeZone: "UTC" });
+    if (style === "short") return d.toLocaleDateString("en-IE", { month: "short", year: "numeric", timeZone: "UTC" });
+    if (!hasTime(value)) return d.toLocaleDateString("en-IE", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+    const day = d.toLocaleDateString("en-IE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Dublin" });
+    const time = d.toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Dublin" });
+    return `${day}, ${time} Irish time`;
   });
   eleventyConfig.addFilter("initials", (name = "") => {
     const parts = name.replace(/\(.*?\)/g, "").trim().split(/\s+/);
