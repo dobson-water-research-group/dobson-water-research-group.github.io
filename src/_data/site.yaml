@@ -31,5 +31,5 @@ mailing_list:
 # The README explains how to set up the script.
 applications:
   email: bdobson@tcd.ie
-  endpoint: "" # the script's web-app address, ending in /exec
+  endpoint: "https://script.google.com/macros/s/AKfycbxR6JCtv33KIcNlTDTxS0pUlorLZBOIlYLWUB-wPRNnpifu-Whtb6ku4WyOkGOtzxYnXg/exec" # the script's web-app address
   max_file_mb: 5 # per file; keep in step with MAX_FILE_MB in apps-script/Code.gs

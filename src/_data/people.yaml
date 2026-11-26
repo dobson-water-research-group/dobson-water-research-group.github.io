@@ -12,7 +12,7 @@
   group: pi
   role: Assistant Professor
   institution: Trinity College Dublin
-  photo: "" # TODO: add e.g. /assets/img/people/barnaby-dobson.jpg
+  photo: /assets/img/people/barnaby-dobson.jpg
   email: bdobson@tcd.ie
   orcid: 0000-0002-0149-4124
   scholar: GymRLtIAAAAJ
