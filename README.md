@@ -15,7 +15,7 @@ day to pick up new publications and close adverts whose deadline has passed.
 | Change the home page text or research themes | `src/index.md` |
 | Advertise a position | copy `src/opportunities/wisgov-phd.md` to a new file in that folder |
 | Hide or add a publication | `src/_data/publications_settings.yaml` |
-| Change the group name, contact details or mailing list | `src/_data/site.yaml` |
+| Change the group name, contact details, application form or mailing list | `src/_data/site.yaml` |
 | Change the menu | `src/_data/navigation.yaml` |
 
 ### Publications
@@ -48,21 +48,33 @@ details and two referees, attach a CV and cover letter (PDFs up to 5 MB each), c
 preview, then send. The form closes itself at the deadline. `src/opportunities/wisgov-phd.md` is a
 working example.
 
-Applications are emailed to `applications.email` in `site.yaml` through
-[FormSubmit](https://formsubmit.co), a free form-to-email service that needs no account. The CV and
-cover letter arrive as attachments named after the applicant. Applicants also get an automatic
-confirmation email. Nothing is stored on the website.
+Each application is emailed to you, with the CV and cover letter attached and named after the
+applicant, by a small Google Apps Script ([`apps-script/Code.gs`](apps-script/Code.gs)) that runs
+in your Google account and sends from your Gmail. Applicants also get a confirmation email from the
+same account; replies go to the address in `RECIPIENT`. Nothing is stored. Until the script's
+address is in `site.yaml`, adverts ask people to email their application instead.
 
-Before the first real application, activate the form once:
+#### Setting up the script (once, about five minutes)
 
-1. Once the site is live, submit a test application yourself.
-2. FormSubmit emails `applications.email` an activation link. Click it. Until then, applications
-   aren't forwarded.
-3. Optional: FormSubmit then gives you a random string to use in place of your email address in
-   `form_action`, so the address isn't in the page source.
+1. Go to [script.google.com](https://script.google.com), signed in to the Google account that should
+   send the emails, and click **New project**. Name it, e.g. "Group website applications".
+2. Delete what's in `Code.gs` and paste in the contents of `apps-script/Code.gs` from this repository.
+   Check `RECIPIENT` at the top, then save.
+3. In the toolbar, choose `sendTestApplication` and press **Run**. Google asks for permission to send
+   email as you. It may warn that the app isn't verified, because it's your own script: choose
+   **Advanced**, then **Go to … (unsafe)**, then **Allow**. You should then get a test application
+   and a test confirmation at `RECIPIENT`.
+4. Click **Deploy → New deployment**. Choose the type **Web app**, set **Execute as** to **Me** and
+   **Who has access** to **Anyone**, then **Deploy**.
+5. Copy the **Web app URL** (it ends in `/exec`) into `applications.endpoint` in
+   `src/_data/site.yaml`, and push. The form appears on adverts once the site rebuilds.
 
-FormSubmit limits each submission to about 10 MB. If you'd rather use another service (for example
-Basin or Formspree's paid plans, which store uploads), change `form_action` in `site.yaml`.
+If you change the script later, use **Deploy → Manage deployments → Edit (pencil) → Version: New
+version → Deploy**, which keeps the same URL. A new deployment would get a new URL.
+
+Gmail lets a personal account send about 100 emails a day, and each application uses two (yours and
+the applicant's confirmation). The script also turns away more than 30 applications in an hour, as
+a guard against junk. If the limit is reached, applicants are asked to email instead.
 
 ## Previewing locally
 

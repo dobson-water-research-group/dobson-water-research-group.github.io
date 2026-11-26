@@ -1,31 +1,34 @@
 {#-
   Application form for an advert with `application_form: true`.
-  It posts to the form service in site.yaml (FormSubmit), which emails the answers, CV and cover
-  letter to site.applications.email. Nothing is stored on the website. The script below checks
-  the files, shows a preview before sending, and shows a thank-you message afterwards.
+  It sends each application to the Google Apps Script in apps-script/Code.gs, which emails the
+  answers, CV and cover letter to site.applications.email. Nothing is stored on the website.
+  Until `applications.endpoint` is set in site.yaml, the page asks people to apply by email.
 -#}
 {%- set apply = site.applications %}
 <section class="apply" id="apply" aria-labelledby="apply-title">
   <h2 id="apply-title">Apply</h2>
 
-  <div class="notice notice-success" data-apply-sent hidden role="status">
+  {%- set emailInstead %}email your CV, a cover letter, and the names and email addresses of two referees to <a href="mailto:{{ apply.email }}?subject={{ ((short_title or title) + ' application') | urlencode }}">{{ apply.email }}</a>{% endset %}
+
+  {%- if apply.endpoint %}
+  <div class="notice notice-success" data-apply-sent hidden role="status" tabindex="-1">
     <p><strong>Thank you, your application has been sent.</strong></p>
-    <p>You should get a confirmation email shortly. If nothing arrives within a day, please email <a href="mailto:{{ apply.email }}">{{ apply.email }}</a> before the deadline.</p>
+    <p>You should get a confirmation email shortly. If nothing arrives within a day, please {{ emailInstead | safe }} before the deadline.</p>
   </div>
   <p class="notice" data-apply-closed hidden>Applications closed on {{ deadline | date }}.</p>
+  <template data-email-instead>{{ emailInstead | safe }}</template>
+  <noscript><p class="notice">The application form needs JavaScript. Instead, please {{ emailInstead | safe }}.</p></noscript>
 
-  <form class="apply-form" action="{{ apply.form_action }}" method="POST" enctype="multipart/form-data"
-        data-closes="{{ deadline | closesAt }}" data-max-mb="{{ apply.max_file_mb or 5 }}">
+  <form class="apply-form" hidden
+        data-endpoint="{{ apply.endpoint }}"
+        data-position="{{ title }}"
+        data-subject="{{ (short_title or title) + ' application' }}"
+        data-page="{{ page.url | htmlBaseUrl(site.url) }}"
+        data-closes="{{ deadline | closesAt }}"
+        data-max-mb="{{ apply.max_file_mb or 5 }}">
     <p>Fill in your details and attach your CV and cover letter.</p>
-
-    {#- Settings for FormSubmit. Field names are used as labels in the email. #}
-    {%- set subject = (short_title or title) + " application" %}
-    <input type="hidden" name="_subject" value="{{ subject }}" data-base="{{ subject }}">
-    <input type="hidden" name="_template" value="table">
-    <input type="hidden" name="_next" value="{{ page.url | htmlBaseUrl(site.url) }}?sent=1#apply">
-    <input type="hidden" name="_autoresponse" value="Thank you for your application for “{{ title }}”. This is an automatic confirmation that your application has arrived. A copy of your details is below. Dobson Water Research Group, Trinity College Dublin">
-    <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <input type="hidden" name="Position" value="{{ title }}">
+    {#- Left empty by people; bots tend to fill it in. #}
+    <input type="text" name="website" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
 
     <fieldset>
       <legend>About you</legend>
@@ -34,7 +37,7 @@
           <input type="text" name="Name" autocomplete="name" required>
         </label>
         <label class="field">Email
-          <input type="email" name="email" data-label="Email" autocomplete="email" required>
+          <input type="email" name="Email" autocomplete="email" required>
         </label>
         <label class="field field-wide">Highest degree <span class="hint">Subject, university, and your result or expected result</span>
           <input type="text" name="Highest degree" required placeholder="e.g. BE Civil Engineering, University of Galway, 2.1 (expected 2026)">
@@ -47,7 +50,7 @@
         <label class="choice"><input type="checkbox" value="{{ option }}"> {{ option }}</label>
         {%- endfor %}
         {#- The ticked dates are sent as one line, e.g. "March 2027, September 2027". #}
-        <input type="hidden" name="Could start" data-preview>
+        <input type="hidden" name="Could start" data-send>
       </fieldset>
       {%- endif %}
     </fieldset>
@@ -76,17 +79,17 @@
       <p class="hint">PDF only, up to {{ apply.max_file_mb or 5 }} MB each.</p>
       <div class="form-grid">
         <label class="field upload">CV <span class="hint">Your education, results, and any research or programming experience</span>
-          <input type="file" name="CV" data-label="CV" accept=".pdf,application/pdf" required>
+          <input type="file" name="CV" accept=".pdf,application/pdf" required>
         </label>
         <label class="field upload">Cover letter <span class="hint">Why this project, and what you'd bring to it</span>
-          <input type="file" name="Cover letter" data-label="Cover letter" accept=".pdf,application/pdf" required>
+          <input type="file" name="Cover letter" accept=".pdf,application/pdf" required>
         </label>
       </div>
     </fieldset>
 
     <label class="check">
-      <input type="checkbox" name="Consent" value="Yes" required>
-      <span>I agree to my details and documents being emailed to {{ apply.email }} through {% if apply.privacy_url %}<a href="{{ apply.privacy_url }}">{{ apply.provider }}</a>{% else %}{{ apply.provider }}{% endif %}, to assess my application.</span>
+      <input type="checkbox" name="Consent" required>
+      <span>I agree to my details and documents being emailed to {{ apply.email }} to assess my application.</span>
     </label>
 
     <div class="form-actions">
@@ -99,44 +102,39 @@
     <p class="muted small">This is what will be emailed to {{ apply.email }}.</p>
     <dl class="preview-list" data-preview-fields></dl>
     <div class="preview-docs" data-preview-docs></div>
-    <p class="muted small">When you press Send, {{ apply.provider }} may ask you to tick a box to show you're not a robot, then bring you back here.</p>
+    <div class="notice notice-error" data-preview-error hidden role="alert"></div>
     <div class="form-actions">
       <button type="button" class="button" data-preview-back>Back to edit</button>
       <button type="button" class="button button-primary" data-preview-send>Send application</button>
     </div>
   </dialog>
+  {%- else %}
+  <p>Please {{ emailInstead | safe }}.</p>
+  {%- endif %}
 </section>
 
+{%- if apply.endpoint %}
 <script>
   (() => {
     const section = document.getElementById("apply");
     const form = section.querySelector(".apply-form");
     const dialog = section.querySelector(".apply-preview");
     const sendButton = dialog.querySelector("[data-preview-send]");
+    const errorBox = dialog.querySelector("[data-preview-error]");
+    const sentBox = section.querySelector("[data-apply-sent]");
     const maxMb = Number(form.dataset.maxMb);
     const fileInputs = [...form.querySelectorAll('input[type="file"]')];
     const previewUrls = [];
-    let confirmed = false;
 
     const size = (bytes) => (bytes < 1048576 ? `${Math.ceil(bytes / 1024)} KB` : `${(bytes / 1048576).toFixed(1)} MB`);
-    const labelOf = (input) => input.dataset.label || input.name;
-
-    // Back from the form service after sending.
-    if (new URLSearchParams(location.search).has("sent")) {
-      form.hidden = true;
-      section.querySelector("[data-apply-sent]").hidden = false;
-      return;
-    }
 
     // The site only rebuilds once a day, so also close the form at the exact deadline.
     const closes = Date.parse(form.dataset.closes);
     if (closes && Date.now() > closes) {
-      form.hidden = true;
       section.querySelector("[data-apply-closed]").hidden = false;
       return;
     }
-
-    form.elements._next.value = `${location.origin}${location.pathname}?sent=1#apply`;
+    form.hidden = false;
 
     // Start dates: at least one must be ticked. The ticked dates go into one hidden field.
     const startGroup = form.querySelector("[data-start]");
@@ -144,7 +142,7 @@
       const boxes = [...startGroup.querySelectorAll('input[type="checkbox"]')];
       const syncStart = () => {
         const ticked = boxes.filter((box) => box.checked).map((box) => box.value);
-        startGroup.querySelector("[data-preview]").value = ticked.join(", ");
+        startGroup.querySelector("[data-send]").value = ticked.join(", ");
         boxes[0].setCustomValidity(ticked.length ? "" : "Please tick at least one start date.");
       };
       boxes.forEach((box) => box.addEventListener("change", syncStart));
@@ -166,10 +164,20 @@
       });
     });
 
-    // "Preview application" opens the preview instead of sending. The browser has already
-    // checked the required fields by the time this runs.
+    // The answers, in order, as [label, value] pairs. Used for both the preview and the email.
+    function answers() {
+      const pairs = [];
+      for (const el of form.elements) {
+        if (!el.name || el.name === "website" || ["file", "checkbox", "fieldset"].includes(el.type)) continue;
+        if (el.type === "hidden" && !("send" in el.dataset)) continue;
+        pairs.push([el.name, el.value.trim()]);
+      }
+      return pairs;
+    }
+
+    // "Preview application" opens the preview. The browser has already checked the required
+    // fields by the time this runs.
     form.addEventListener("submit", (event) => {
-      if (confirmed) return;
       event.preventDefault();
       showPreview();
     });
@@ -181,16 +189,13 @@
       docs.replaceChildren();
       previewUrls.splice(0).forEach((url) => URL.revokeObjectURL(url));
 
-      for (const el of form.elements) {
-        if (!el.name || el.name.startsWith("_") || ["file", "checkbox", "fieldset"].includes(el.type)) continue;
-        if (el.type === "hidden" && !("preview" in el.dataset)) continue;
-        if (el.type === "radio" && !el.checked) continue;
+      for (const [label, value] of answers()) {
         const row = document.createElement("div");
         const dt = document.createElement("dt");
         const dd = document.createElement("dd");
-        dt.textContent = labelOf(el);
-        dd.textContent = el.value.trim() || "Not given";
-        if (!el.value.trim()) dd.className = "muted";
+        dt.textContent = label;
+        dd.textContent = value || "Not given";
+        if (!value) dd.className = "muted";
         row.append(dt, dd);
         fields.append(row);
       }
@@ -204,7 +209,7 @@
         const caption = document.createElement("figcaption");
         const strong = document.createElement("strong");
         const link = document.createElement("a");
-        strong.textContent = labelOf(input);
+        strong.textContent = input.name;
         link.href = url;
         link.target = "_blank";
         link.rel = "noopener";
@@ -212,50 +217,100 @@
         caption.append(strong, ` · ${file.name} (${size(file.size)}) · `, link);
         const frame = document.createElement("iframe");
         frame.src = `${url}#navpanes=0`;
-        frame.title = `${labelOf(input)} preview`;
+        frame.title = `${input.name} preview`;
         figure.append(caption, frame);
         docs.append(figure);
       }
 
-      sendButton.disabled = false;
-      sendButton.textContent = "Send application";
+      errorBox.hidden = true;
+      setSending(false);
       dialog.showModal();
       dialog.scrollTop = 0;
     }
 
     dialog.querySelector("[data-preview-back]").addEventListener("click", () => dialog.close());
 
-    sendButton.addEventListener("click", () => {
-      const name = form.elements.Name.value.trim();
-      form.elements._subject.value = `${form.elements._subject.dataset.base}: ${name}`;
-      renameFiles(name);
-      confirmed = true;
-      sendButton.disabled = true;
-      sendButton.textContent = "Sending…";
-      form.submit();
+    sendButton.addEventListener("click", async () => {
+      setSending(true);
+      errorBox.hidden = true;
+      try {
+        await send();
+        dialog.close();
+        form.hidden = true;
+        sentBox.hidden = false;
+        sentBox.scrollIntoView({ block: "center" });
+        sentBox.focus({ preventScroll: true });
+      } catch (err) {
+        errorBox.replaceChildren();
+        const p = document.createElement("p");
+        p.textContent = `Sorry, your application couldn't be sent. ${err.message || ""}`.trim();
+        const help = document.createElement("p");
+        help.append(
+          "Please try again in a few minutes. If it still doesn't work, please ",
+          section.querySelector("template[data-email-instead]").content.cloneNode(true),
+          ".",
+        );
+        errorBox.append(p, help);
+        errorBox.hidden = false;
+        errorBox.scrollIntoView({ block: "nearest" });
+        setSending(false);
+      }
     });
 
-    // Name the attachments after the applicant, e.g. "Jane Smith - CV.pdf", so they're easy to file.
-    function renameFiles(name) {
-      const clean = name.replace(/[^\p{L}\p{N} .'-]/gu, "").trim() || "Applicant";
-      for (const input of fileInputs) {
-        const file = input.files[0];
-        if (!file) continue;
-        try {
-          const list = new DataTransfer();
-          list.items.add(new File([file], `${clean} - ${labelOf(input)}.pdf`, { type: "application/pdf" }));
-          input.files = list.files;
-        } catch {
-          // Older browsers can't rename files; the original name is fine.
-        }
-      }
+    function setSending(sending) {
+      sendButton.disabled = sending;
+      sendButton.textContent = sending ? "Sending…" : "Send application";
     }
 
-    // If someone comes back to this page with the browser's Back button, let them send again.
-    window.addEventListener("pageshow", () => {
-      confirmed = false;
-      sendButton.disabled = false;
-      sendButton.textContent = "Send application";
-    });
+    async function send() {
+      const name = form.elements.Name.value.trim();
+      const fileName = name.replace(/[^\p{L}\p{N} .'-]/gu, "").trim() || "Applicant";
+      const files = await Promise.all(
+        fileInputs
+          .filter((input) => input.files[0])
+          .map(async (input) => ({
+            label: input.name,
+            name: `${fileName} - ${input.name}.pdf`,
+            data: await toBase64(input.files[0]),
+          })),
+      );
+      const application = {
+        position: form.dataset.position,
+        subject: form.dataset.subject,
+        page: form.dataset.page,
+        name,
+        email: form.elements.Email.value.trim(),
+        fields: answers(),
+        files,
+        website: form.elements.website.value,
+      };
+      const timeout = new AbortController();
+      const timer = setTimeout(() => timeout.abort(), 120000);
+      let response;
+      try {
+        // Sent as plain text so the browser doesn't need to ask Google's permission first.
+        response = await fetch(form.dataset.endpoint, {
+          method: "POST",
+          body: JSON.stringify(application),
+          signal: timeout.signal,
+        });
+      } catch {
+        throw new Error("The connection failed or timed out.");
+      } finally {
+        clearTimeout(timer);
+      }
+      const result = await response.json().catch(() => ({ ok: false }));
+      if (!result.ok) throw new Error(result.message || "");
+    }
+
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1]);
+        reader.onerror = () => reject(new Error(`${file.name} couldn't be read.`));
+        reader.readAsDataURL(file);
+      });
+    }
   })();
 </script>
+{%- endif %}

@@ -12,6 +12,8 @@
   --success-soft: #dafbe1;
   --attention: #7d4e00;
   --attention-soft: #fff8c5;
+  --danger: #d1242f;
+  --danger-soft: #ffebe9;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   --sidebar: 17rem;
@@ -31,6 +33,8 @@
     --success-soft: #12261e;
     --attention: #d29922;
     --attention-soft: #272115;
+    --danger: #f85149;
+    --danger-soft: #25171c;
     color-scheme: dark;
   }
 }
@@ -220,6 +224,8 @@ h2 + .entries { border-top: 0; }
 .honey { display: none; }
 .notice-success { background: var(--success-soft); color: var(--text); border-left: 3px solid var(--success); }
 .notice-success p:last-child { margin-bottom: 0; }
+.notice-error { background: var(--danger-soft); color: var(--text); border-left: 3px solid var(--danger); margin: 0 0 1rem; }
+.notice-error p:last-child { margin-bottom: 0; }
 @media (max-width: 40rem) { .form-grid { grid-template-columns: 1fr; } }
 
 .apply-preview {

@@ -24,12 +24,12 @@ mailing_list:
   email_field: email # the name of the email input in the provider's embed code
   privacy_url: "" # link to the provider's privacy policy, or your own
 
-# Application form, shown on adverts that set `application_form: true`. Applicants' details, CV and
-# cover letter are emailed to `email` through FormSubmit (formsubmit.co), a free form-to-email
-# service. Nothing is stored on this website. The README explains the one-time activation step.
+# Application form, shown on adverts that set `application_form: true`. Each application is
+# emailed, with the CV and cover letter attached, to `email` by a small Google Apps Script
+# (apps-script/Code.gs) running in your Google account. Nothing is stored on this website.
+# Until `endpoint` is set, adverts ask people to email their application instead.
+# The README explains how to set up the script.
 applications:
   email: bdobson@tcd.ie
-  form_action: https://formsubmit.co/bdobson@tcd.ie # after activation you can swap the address for the random string FormSubmit sends you
-  provider: FormSubmit
-  privacy_url: https://formsubmit.co/privacy.pdf
-  max_file_mb: 5 # per file; FormSubmit limits a whole submission to about 10 MB
+  endpoint: "" # the script's web-app address, ending in /exec
+  max_file_mb: 5 # per file; keep in step with MAX_FILE_MB in apps-script/Code.gs
