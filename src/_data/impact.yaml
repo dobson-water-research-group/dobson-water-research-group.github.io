@@ -1,6 +1,6 @@
 # The Impact page, section by section, in the order shown. List items most recent first.
 # Each item has a title, an optional link (url), when it happened, who it was with (optional),
-# and a sentence or two of text (Markdown).
+# and a sentence or two of text (Markdown). Describe what the models did, not who did what.
 
 - section: Industry and government
   items:
@@ -9,38 +9,36 @@
       when: "2026"
       who: United Utilities, Jacobs and Mott MacDonald
       text: >-
-        A coalition including United Utilities, the Environment Agency and local groups wants only
-        rainwater, and no treated or untreated sewage, to reach Windermere, England's largest lake.
-        Barnaby was the independent assurer for the feasibility study by Jacobs and Mott MacDonald
-        into what that would take.
+        A feasibility study of what it would take for only rainwater, and no treated or untreated
+        sewage, to reach Windermere, England's largest lake. The group gave independent assurance
+        of the study.
 
     - title: Sewer models for Florida
       url: /software/swmmanywhere/
       when: "2025"
       who: Arup and The Nature Conservancy
       text: >-
-        Arup is using SWMManywhere to build urban drainage models in Florida for The Nature
-        Conservancy, with Barnaby advising.
+        SWMManywhere is building urban drainage models for Florida from open data on streets,
+        elevation and buildings.
 
     - title: Integrated water management across England
       url: /software/wsimod/
-      when: 2022–2024
+      when: 2022–2025
       who: Environment Agency, Greater London Authority and Greater Manchester Combined Authority
       text: >-
-        WSIMOD has been used in seven commissioned studies, modelling how water supply, wastewater
-        and rivers interact in places across England and Wales.
+        WSIMOD has modelled how water supply, wastewater and rivers interact in seven commissioned
+        studies across England and Wales.
 
     - title: Virtual decision rooms for water planning
       url: https://nora.nerc.ac.uk/535476/1/VENTURA_GreaterManchester_BriefingNote_July2023_IssC.pdf
       when: 2021–2023
-      who: Greater Manchester Combined Authority, United Utilities and the Environment Agency
+      who: VENTURA, with Imperial College London, UCL and the British Geological Survey
       text: >-
-        In the VENTURA project, a WSIMOD model of the Upper Mersey catchment sat behind a "virtual
-        decision room" where planners could explore options for water-neutral growth in Greater
-        Manchester. A second study covered Enfield, in London.
+        WSIMOD powered a prototype "virtual decision room" for exploring options for water-neutral
+        growth, tested in Greater Manchester and Enfield, London.
 
 - section: In the news
-  intro: Barnaby comments on droughts and sewage spills in the media, including for
+  intro: Comment on droughts and sewage spills for
   compact: true # one line per item: title (when), text
   items:
     - title: BBC News
@@ -67,9 +65,7 @@
       when: 2019–2020
       who: Environment Agency
       text: >-
-        National water-supply modelling from Barnaby's time at the University of Oxford fed into
-        the Environment Agency's national framework, and became the main tool for combining water
-        companies' modelling results to plan transfers between them. The Environment Agency sent a
-        letter of thanks, and Oxford's School of Geography gave the work a recognition award.
-        Read more in [*The spatial dynamics of droughts and water scarcity in England and
-        Wales*](https://doi.org/10.1029/2020WR027187).
+        A national water-supply model, built at the University of Oxford, fed into the Environment
+        Agency's national framework and became the main tool for combining water companies'
+        modelling results to plan transfers between them. Read more in [*The spatial dynamics of
+        droughts and water scarcity in England and Wales*](https://doi.org/10.1029/2020WR027187).
