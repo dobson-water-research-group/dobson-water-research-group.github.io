@@ -59,8 +59,13 @@ eleventyComputed:
 </div>
 
 {%- if tool.figure %}
-<figure class="figure">
-  <a href="{{ tool.figure.src }}"><img src="{{ tool.figure.src }}" alt="{{ tool.figure.alt }}" loading="lazy"></a>
+<figure class="figure{% if tool.figure.src_dark %} has-dark{% endif %}">
+  <a href="{{ tool.figure.src }}">
+    <picture>
+      {%- if tool.figure.src_dark %}<source srcset="{{ tool.figure.src_dark }}" media="(prefers-color-scheme: dark)">{% endif %}
+      <img src="{{ tool.figure.src }}" alt="{{ tool.figure.alt }}" loading="lazy">
+    </picture>
+  </a>
   {%- if tool.figure.caption %}<figcaption>{{ tool.figure.caption | mdInline | safe }}</figcaption>{% endif %}
 </figure>
 {%- endif %}

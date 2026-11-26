@@ -251,6 +251,7 @@ h2 + .entries { border-top: 0; }
 /* ---------- Figures and embedded demos on software pages ---------- */
 .figure { margin: 2rem 0 0; }
 .figure img { display: block; width: 100%; height: auto; background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem; }
+@media (prefers-color-scheme: dark) { .figure.has-dark img { background: var(--bg-subtle); } }
 .figure figcaption { color: var(--muted); font-size: 0.875rem; margin-top: 0.5rem; }
 .try-it { margin: 2rem 0 0; border: 1px solid var(--border); border-radius: 6px; }
 .try-it summary {

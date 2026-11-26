@@ -26,6 +26,7 @@
       doi: 10.5194/gmd-17-4495-2024
   figure:
     src: /assets/img/software/wsimod-schematic.svg
+    src_dark: /assets/img/software/wsimod-schematic-dark.svg # optional, shown in dark mode
     alt: >-
       Schematic of a WSIMOD model. Nodes for demand, land, sewers, distribution, groundwater,
       treatment works and the river network are joined by arcs that push or pull water, and are
@@ -60,6 +61,7 @@
       doi: 10.21105/joss.07729
   figure:
     src: /assets/img/software/swmmanywhere-workflow.webp
+    src_dark: /assets/img/software/swmmanywhere-workflow-dark.webp
     alt: >-
       Seven map panels showing SWMManywhere building a sewer network for a residential area:
       (a) the OpenStreetMap street graph, (b) cleaned streets, (c) outfalls to the river,
