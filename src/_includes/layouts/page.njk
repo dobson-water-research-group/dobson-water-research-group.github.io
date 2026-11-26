@@ -1,0 +1,9 @@
+---
+layout: layouts/base.njk
+---
+<header class="page-header">
+  {%- if eyebrow %}<p class="eyebrow">{{ eyebrow | safe }}</p>{% endif %}
+  <h1>{{ title }}</h1>
+  {%- if intro %}<p class="lede">{{ intro | mdInline | safe }}</p>{% endif %}
+</header>
+{{ content | safe }}

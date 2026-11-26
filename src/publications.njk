@@ -1,0 +1,82 @@
+---
+layout: layouts/page.njk
+title: Publications
+intro: Updated automatically from group members' ORCID records.
+permalink: /publications/
+---
+{%- set withOrcid = people | selectattr("orcid") %}
+<div class="pub-filters" hidden>
+  <label class="field">
+    <span>Search</span>
+    <input type="search" id="pub-search" placeholder="Title, author or journal">
+  </label>
+  <label class="field">
+    <span>Person</span>
+    <select id="pub-person">
+      <option value="">Everyone</option>
+      {%- for p in withOrcid %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+    </select>
+  </label>
+  <fieldset class="chips">
+    <legend>Show</legend>
+    {%- for c in publications.categories %}
+    <label class="chip"><input type="checkbox" value="{{ c.key }}"{% if c.shown %} checked{% endif %}> {{ c.label }} <span class="count">{{ c.count }}</span></label>
+    {%- endfor %}
+  </fieldset>
+</div>
+<p class="pub-count muted small" aria-live="polite"></p>
+
+{%- if publications.items.length == 0 %}
+<p class="empty">No publications could be loaded right now.</p>
+{%- endif %}
+
+{%- for group in publications.years %}
+<section class="pub-year" data-year="{{ group.year }}">
+  <h2>{{ group.year }}</h2>
+  <ol class="pub-list">
+    {%- for pub in group.items %}
+    {% include "partials/publication.njk" %}
+    {%- endfor %}
+  </ol>
+</section>
+{%- endfor %}
+
+
+<script>
+  (() => {
+    const filters = document.querySelector(".pub-filters");
+    const search = document.getElementById("pub-search");
+    const person = document.getElementById("pub-person");
+    const boxes = [...filters.querySelectorAll("input[type=checkbox]")];
+    const items = [...document.querySelectorAll(".pub-year .pub")];
+    const years = [...document.querySelectorAll(".pub-year")];
+    const count = document.querySelector(".pub-count");
+    items.forEach((li) => (li.dataset.text = li.textContent.toLowerCase()));
+
+    const params = new URLSearchParams(location.search);
+    if (params.get("person")) person.value = params.get("person");
+
+    function apply() {
+      const types = new Set(boxes.filter((b) => b.checked).map((b) => b.value));
+      const q = search.value.trim().toLowerCase();
+      let shown = 0;
+      for (const li of items) {
+        const ok =
+          types.has(li.dataset.category) &&
+          (!person.value || li.dataset.people.split(" ").includes(person.value)) &&
+          (!q || li.dataset.text.includes(q));
+        li.hidden = !ok;
+        if (ok) shown++;
+      }
+      years.forEach((y) => (y.hidden = !y.querySelector(".pub:not([hidden])")));
+      count.textContent = `Showing ${shown} of ${items.length}`;
+      const url = new URL(location);
+      person.value ? url.searchParams.set("person", person.value) : url.searchParams.delete("person");
+      history.replaceState(null, "", url);
+    }
+
+    filters.hidden = false;
+    filters.addEventListener("input", apply);
+    apply();
+  })();
+</script>

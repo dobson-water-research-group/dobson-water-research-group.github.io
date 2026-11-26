@@ -1,0 +1,14 @@
+---
+layout: layouts/page.njk
+title: Software
+intro: Open-source tools from the group. Issues and contributions are welcome on GitHub.
+permalink: /software/
+---
+<ul class="entries">
+  {%- for tool in software %}
+  <li>
+    <p class="entry-title"><a href="/software/{{ tool.name | slugify }}/">{{ tool.name }}</a></p>
+    <p class="entry-sub">{{ tool.tagline }}</p>
+  </li>
+  {%- endfor %}
+</ul>

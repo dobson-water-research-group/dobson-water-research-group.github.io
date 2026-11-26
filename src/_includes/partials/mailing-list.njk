@@ -1,0 +1,12 @@
+{%- set ml = site.mailing_list %}
+<h2 id="mailing-list">Mailing list</h2>
+<form action="{{ ml.form_action }}" method="post" target="_blank" class="prose">
+  <p>We'll email you when we advertise a new position, and only then.</p>
+  <label class="field">
+    <span>Email address</span>
+    <input type="email" name="{{ ml.email_field or 'email' }}" required autocomplete="email">
+  </label>
+  <p class="small"><label><input type="checkbox" required> I'd like to receive emails from {{ site.title }} about opportunities. I can unsubscribe at any time.</label></p>
+  <button class="button button-primary" type="submit">Subscribe</button>
+  <p class="muted small">{% if ml.provider %}The list is run with {{ ml.provider }}. {% endif %}{% if ml.privacy_url %}<a href="{{ ml.privacy_url }}">Privacy policy</a>.{% endif %}</p>
+</form>

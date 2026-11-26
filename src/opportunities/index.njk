@@ -1,0 +1,41 @@
+---
+layout: layouts/page.njk
+title: Opportunities
+permalink: /opportunities/
+---
+{%- set open = collections.opportunities | openOnly %}
+{%- set closed = collections.opportunities | closedOnly %}
+
+<h2>Open positions</h2>
+{%- if open.length %}
+<ul class="entries">
+  {%- for job in open %}
+  <li>
+    <p class="entry-title"><a href="{{ job.url }}">{{ job.data.title }}</a>{% if job.data.draft %}<span class="pill pill-draft">Draft, not published</span>{% endif %}</p>
+    <p class="entry-sub">{{ job.data.position }}{% if job.data.location %} · {{ job.data.location }}{% endif %}{% if job.data.deadline %} · Deadline {{ job.data.deadline | date }}{% endif %}</p>
+  </li>
+  {%- endfor %}
+</ul>
+{%- else %}
+<p class="empty">None at the moment.</p>
+{%- endif %}
+
+<h2>Bringing your own funding</h2>
+<div class="prose">
+  <p>We're happy to support applications to fellowship and scholarship schemes, such as the Research Ireland Government of Ireland Postgraduate Scholarship or Marie Skłodowska-Curie Postdoctoral Fellowships. Email <a href="mailto:{{ site.email }}">{{ site.email }}</a> with a CV and a few lines on what you'd like to work on, well before the deadline.</p>
+</div>
+
+{%- if site.mailing_list.form_action %}
+{% include "partials/mailing-list.njk" %}
+{%- endif %}
+
+{%- if closed.length %}
+<details class="past">
+  <summary>Past positions ({{ closed.length }})</summary>
+  <ul>
+    {%- for job in closed %}
+    <li><a href="{{ job.url }}">{{ job.data.title }}</a> <span class="muted small">{{ job.data.position }}{% if job.data.deadline %}, closed {{ job.data.deadline | date("short") }}{% endif %}</span></li>
+    {%- endfor %}
+  </ul>
+</details>
+{%- endif %}

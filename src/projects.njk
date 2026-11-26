@@ -1,0 +1,29 @@
+---
+layout: layouts/page.njk
+title: Projects
+permalink: /projects/
+---
+{%- for status in ["active", "completed"] %}
+{%- set group = projects | where("status", status) %}
+{%- if group.length %}
+<h2>{{ "Current" if status == "active" else "Past" }}</h2>
+{%- for project in group %}
+<section id="{{ project.name | slugify }}">
+  <h3>{{ project.name }}{% if project.full_name %} <span class="muted">· {{ project.full_name }}</span>{% endif %}</h3>
+  <div class="prose">{{ project.summary | md | safe }}</div>
+  <dl class="facts">
+    {%- if project.funder %}<div><dt>Funder</dt><dd>{{ project.funder }}</dd></div>{% endif %}
+    {%- if project.start %}<div><dt>Dates</dt><dd>{{ project.start }}{% if project.end %}–{{ project.end }}{% endif %}</dd></div>
+    {%- elif project.duration %}<div><dt>Duration</dt><dd>{{ project.duration }}</dd></div>{% endif %}
+    {%- if project.partners and project.partners.length %}<div><dt>Partners</dt><dd>{{ project.partners | join(", ") }}</dd></div>{% endif %}
+    {%- if project.people and project.people.length %}
+    <div><dt>Group members</dt><dd>
+      {%- for id in project.people %}{% set p = people | person(id) %}{% if p %}<a href="/people/#{{ p.id }}">{{ p.name }}</a>{% if not loop.last %}, {% endif %}{% endif %}{% endfor -%}
+    </dd></div>
+    {%- endif %}
+  </dl>
+  {%- if project.url %}<p><a href="{{ project.url }}">Project website →</a></p>{% endif %}
+</section>
+{%- endfor %}
+{%- endif %}
+{%- endfor %}

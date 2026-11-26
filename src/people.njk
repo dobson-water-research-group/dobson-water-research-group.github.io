@@ -1,0 +1,42 @@
+---
+layout: layouts/page.njk
+title: People
+permalink: /people/
+groups:
+  - { key: pi, title: Principal investigator }
+  - { key: postdoc, title: Postdoctoral researchers }
+  - { key: phd, title: PhD students }
+  - { key: masters, title: Masters students }
+  - { key: visitor, title: Visitors }
+  - { key: alumni, title: Alumni }
+---
+{%- for g in groups %}
+{%- set members = people | where("group", g.key) %}
+{%- if members.length %}
+<h2>{{ g.title }}</h2>
+<ul class="people">
+  {%- for p in members %}
+  <li class="person" id="{{ p.id }}">
+    {%- if p.photo %}
+    <img class="avatar" src="{{ p.photo }}" alt="" width="72" height="72" loading="lazy">
+    {%- else %}
+    <span class="avatar avatar-initials" aria-hidden="true">{{ p.name | initials }}</span>
+    {%- endif %}
+    <div>
+      <h3>{{ p.name }}</h3>
+      <p class="person-role">{{ p.role }}{% if p.institution %}, {{ p.institution }}{% endif %}</p>
+      {%- if p.bio %}<div class="person-bio">{{ p.bio | md | safe }}</div>{% endif %}
+      <ul class="person-links">
+        {%- if p.email %}<li><a href="mailto:{{ p.email }}">Email</a></li>{% endif %}
+        {%- if p.scholar %}<li><a href="https://scholar.google.com/citations?user={{ p.scholar }}">Google Scholar</a></li>{% endif %}
+        {%- if p.orcid %}<li><a href="https://orcid.org/{{ p.orcid }}">ORCID</a></li>{% endif %}
+        {%- if p.github %}<li><a href="https://github.com/{{ p.github }}">GitHub</a></li>{% endif %}
+        {%- for link in p.links %}<li><a href="{{ link.url }}">{{ link.label }}</a></li>{% endfor %}
+        {%- if p.orcid %}<li><a href="/publications/?person={{ p.id }}">Publications</a></li>{% endif %}
+      </ul>
+    </div>
+  </li>
+  {%- endfor %}
+</ul>
+{%- endif %}
+{%- endfor %}

@@ -1,0 +1,16 @@
+# Research projects. `status` is active or completed; `people` lists ids from people.yaml.
+
+- name: WISGOV
+  full_name: Water Integration for Systems Governance
+  status: active
+  start: "" # TODO e.g. 2027
+  end: "" # TODO e.g. 2031
+  duration: 4 years
+  funder: Environmental Protection Agency (EPA Research Programme 2030)
+  url: "" # the project will have its own website; link it here when it exists
+  people: [barnaby-dobson]
+  partners: [Trinity College Dublin, Dublin City University]
+  summary: >-
+    WISGOV is building the first national-scale integrated water systems model for Ireland,
+    including karst groundwater, and using it with Irish water agencies to test how climate
+    adaptation decisions in one sector ripple through the rest of the water system.

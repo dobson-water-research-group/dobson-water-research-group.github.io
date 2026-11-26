@@ -1,0 +1,25 @@
+# Site-wide settings. Anything marked TODO needs a decision or a fact from you.
+
+title: Dobson Water Research Group # shown in full; elsewhere in the text it is just "the group"
+tagline: Open-source modelling of integrated water systems.
+description: >-
+  A research group at Trinity College Dublin developing open-source tools to model how urban and
+  rural water systems interact, and using them to support better decisions about water quantity
+  and quality.
+
+# Public address of the site, used for social-media link previews. Change this if you use a custom domain.
+url: https://barneydobson.github.io
+
+institution: Trinity College Dublin
+department: Department of Civil, Structural & Environmental Engineering
+address: Museum Building, Trinity College Dublin, Dublin 2, Ireland
+email: bdobson@tcd.ie
+github: https://github.com/barneydobson # TODO: change to the organisation's page if you create one
+
+# Mailing list for the Opportunities page. Until form_action is set, the page shows a
+# "coming soon" note with the email address above instead of a form.
+mailing_list:
+  provider: "" # e.g. MailerLite, Buttondown, Mailchimp. Shown in the privacy note.
+  form_action: "" # the form's POST address, copied from the provider's embed code
+  email_field: email # the name of the email input in the provider's embed code
+  privacy_url: "" # link to the provider's privacy policy, or your own

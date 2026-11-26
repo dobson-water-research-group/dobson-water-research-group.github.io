@@ -1,0 +1,90 @@
+# Open-source software from the group. Each tool gets its own page at /software/<name>/,
+# in this order. `tagline` is the one-liner shown on the Software index.
+
+- name: WSIMOD
+  full_name: Water Systems Integrated Modelling framework
+  tagline: Integrated modelling of water quantity and quality across the whole water cycle.
+  summary: >-
+    WSIMOD models the water cycle as one connected system, where physical processes and human
+    management interact. Self-contained components for rivers, reservoirs, urban and rural
+    catchments, treatment works and pipe networks pass water and pollutants to one another, so you
+    can follow both quantity and quality from source to sea.
+  features:
+    - Tracks water quantity *and* quality through every component
+    - Mix-and-match nodes and arcs to build a model of any water system
+    - Command-line interface for running models from configuration files
+    - Tutorials and worked examples to get started
+  language: Python
+  license: BSD-3-Clause
+  install: pip install wsimod
+  docs: https://imperialcollegelondon.github.io/wsi/
+  repo: https://github.com/ImperialCollegeLondon/wsi
+  papers:
+    - label: JOSS (2023)
+      doi: 10.21105/joss.04996
+    - label: Geoscientific Model Development (2024)
+      doi: 10.5194/gmd-17-4495-2024
+  figure:
+    src: /assets/img/software/wsimod-schematic.svg
+    alt: >-
+      Schematic of a WSIMOD model. Nodes for demand, land, sewers, distribution, groundwater,
+      treatment works and the river network are joined by arcs that push or pull water, and are
+      run in a fixed order each timestep.
+    caption: A WSIMOD model is a set of nodes joined by arcs, run in a fixed order each timestep.
+  credit: >-
+    Developed with Leyang Liu and Ana Mijic at Imperial College London, funded through the
+    CAMELLIA project (NERC NE/S003495/1).
+
+- name: SWMManywhere
+  full_name: Synthetic urban drainage models, anywhere in the world
+  tagline: Build and run an urban drainage model for any city from open data.
+  summary: >-
+    Most cities have no publicly available model of their sewers. SWMManywhere builds one from open
+    data (street networks, elevation and buildings), then runs it in EPA SWMM. Because every step
+    is parameterised, it also lets you test how sensitive a drainage model is to the assumptions
+    used to build it.
+  features:
+    - Derives a sewer network for any location from open global datasets
+    - Simulates it with EPA SWMM through pyswmm
+    - Configurable, swappable network-building steps
+    - Built-in metrics for comparing synthetic and real networks
+  language: Python
+  license: BSD-3-Clause
+  install: pip install swmmanywhere
+  docs: https://imperialcollegelondon.github.io/SWMManywhere/
+  repo: https://github.com/ImperialCollegeLondon/SWMManywhere
+  papers:
+    - label: Environmental Modelling & Software (2025)
+      doi: 10.1016/j.envsoft.2025.106358
+    - label: JOSS (2025)
+      doi: 10.21105/joss.07729
+  figure:
+    src: /assets/img/software/swmmanywhere-workflow.webp
+    alt: >-
+      Seven map panels showing SWMManywhere building a sewer network for a residential area:
+      (a) the OpenStreetMap street graph, (b) cleaned streets, (c) outfalls to the river,
+      (d) sub-catchments, (e) weights on each street, (f) network topology and (g) the final
+      hydraulic design with pipe sizes.
+    caption: From open street data to a designed sewer network, step by step.
+
+- name: hydraulician
+  full_name: Interactive hydraulics in your browser
+  tagline: Draw a channel, pipe or tank and watch water flow through it. Built for teaching.
+  summary: >-
+    A free-surface flow solver that runs in the browser. Draw a channel, pipe or tank with the mouse
+    and watch the water move, with depth, discharge, critical and normal depth, energy lines and
+    hydraulic jumps measured as it goes. It's for lectures, tutorials and open days, not design.
+  features:
+    - Nothing to install. It runs in any modern browser
+    - A syllabus of exercises from hydrostatics to unsteady pipe flow
+    - Exercises can be embedded in Blackboard or Canvas pages
+  language: JavaScript
+  license: GPL-3.0
+  launch: https://barneydobson.github.io/hydraulician/
+  # The "Try it" panel. It only loads when someone opens it.
+  embed:
+    src: https://barneydobson.github.io/hydraulician/?ex=HJ-1&embed=1
+    title: hydraulician · HJ-1
+    height: 640
+  repo: https://github.com/barneydobson/hydraulician
+  status: Work in progress

@@ -1,0 +1,20 @@
+# Publications are pulled automatically from OpenAlex (https://openalex.org), a free,
+# open index of research, using the ORCID iD of everyone in people.yaml. The site
+# rebuilds every day, so new papers appear within a day or so of being indexed.
+
+# Hide anything that is wrongly attributed or that you'd rather not list (DOIs or OpenAlex ids).
+hide:
+  # - 10.1016/j.prevetmed.2021.105407
+
+# Add anything that OpenAlex misses.
+extra:
+  # - title: "Paper title"
+  #   authors: [B. Dobson, A. N. Other]
+  #   venue: Journal name
+  #   year: 2026
+  #   type: article    # article | chapter | conference-paper | preprint | abstract | thesis | dataset | report
+  #   doi: 10.xxxx/xxxxx
+  #   url: https://...
+
+# Only list work from this year onwards (leave blank for everything).
+since_year: 2020

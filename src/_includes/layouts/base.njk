@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- set pageTitle = (title + " · " + site.title) if (title and page.url != "/") else (site.title + " · " + site.institution) %}
+  <title>{{ pageTitle }}</title>
+  <meta name="description" content="{{ description or site.description }}">
+  <meta property="og:title" content="{{ pageTitle }}">
+  <meta property="og:description" content="{{ description or site.description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <a class="brand" href="/">
+          <img src="/assets/img/logo.svg" alt="" width="28" height="28">
+          <span>{{ site.title }}</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="side-nav">Menu</button>
+      </div>
+      <p class="sidebar-tagline">{{ site.tagline }}</p>
+      <nav id="side-nav" class="side-nav" aria-label="Main">
+        <ul>
+          {%- for item in navigation %}
+          {%- set inSection = (page.url == item.url) or (item.url != "/" and page.url.startsWith(item.url)) %}
+          <li>
+            <a href="{{ item.url }}"{% if page.url == item.url %} aria-current="page"{% elif inSection %} class="in-section"{% endif %}>{{ item.title }}</a>
+            {%- if item.children == "software" %}
+            <ul>
+              {%- for tool in software %}
+              {%- set toolUrl = "/software/" + (tool.name | slugify) + "/" %}
+              <li><a href="{{ toolUrl }}"{% if page.url == toolUrl %} aria-current="page"{% endif %}>{{ tool.name }}</a></li>
+              {%- endfor %}
+            </ul>
+            {%- endif %}
+          </li>
+          {%- endfor %}
+        </ul>
+      </nav>
+      <div class="sidebar-foot">
+        <p>{{ site.department }}<br>{{ site.institution }}</p>
+        <p><a href="mailto:{{ site.email }}">{{ site.email }}</a><br><a href="{{ site.github }}">GitHub</a></p>
+      </div>
+    </aside>
+
+    <main id="main" class="content">
+      {{ content | safe }}
+      <footer class="content-foot">© {{ "" | year }} {{ site.title }} · {{ site.institution }}</footer>
+    </main>
+  </div>
+
+  <script>
+    const toggle = document.querySelector(".nav-toggle");
+    const sidebar = document.querySelector(".sidebar");
+    toggle.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!open));
+      sidebar.classList.toggle("is-open", !open);
+    });
+  </script>
+</body>
+</html>

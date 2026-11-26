@@ -1,0 +1,48 @@
+# Group members. Each person appears on the People page under their `group`.
+#
+#   id:          short unique slug, used for links (e.g. projects list people by id)
+#   group:       pi | postdoc | phd | masters | visitor | alumni
+#   photo:       optional, a square image in src/assets/img/people/ (initials are shown otherwise)
+#   orcid:       their ORCID iD. Their publications are pulled in automatically from it.
+#   scholar:     optional, the user=... part of their Google Scholar profile URL
+#   links:       optional, any other links (label + url)
+
+- id: barnaby-dobson
+  name: Barnaby Dobson
+  group: pi
+  role: Assistant Professor
+  institution: Trinity College Dublin
+  photo: "" # TODO: add e.g. /assets/img/people/barnaby-dobson.jpg
+  email: bdobson@tcd.ie
+  orcid: 0000-0002-0149-4124
+  scholar: GymRLtIAAAAJ
+  github: barneydobson
+  bio: >-
+    Barnaby builds open-source models of the integrated water cycle, including WSIMOD and
+    SWMManywhere. Before joining Trinity in 2026 he was a Research Associate and then an Imperial
+    College Research Fellow at Imperial College London, and a Research Associate at the University
+    of Oxford. He has an MEng and a PhD in Civil Engineering from the University of Bristol.
+
+- id: chengxu-shen
+  name: Chengxu (Alvin) Shen
+  group: phd
+  role: PhD student
+  institution: Trinity College Dublin
+  photo: ""
+  orcid: "" # add once Alvin has one, and his papers will appear automatically
+  scholar: ""
+  bio: >-
+    *River-centric, open-data modelling for high-resolution water-quality planning in Ireland.*
+    Funded by a Trinity Research Doctorate Award.
+
+- id: robin-maes-prior
+  name: Robin Maes-Prior
+  group: phd
+  role: PhD student
+  institution: Imperial College London
+  photo: ""
+  orcid: 0000-0001-5513-7731
+  scholar: AfLUbKAAAAAJ
+  bio: >-
+    *Integral Modelling Framework to Assess the Systems-wide Impacts of Wastewater Management.*
+    Co-funded by Mott MacDonald and UKRI.

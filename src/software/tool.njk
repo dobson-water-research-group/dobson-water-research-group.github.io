@@ -1,0 +1,99 @@
+---
+layout: layouts/page.njk
+pagination:
+  data: software
+  size: 1
+  alias: tool
+permalink: "/software/{{ tool.name | slugify }}/"
+eleventyComputed:
+  title: "{{ tool.name }}"
+  intro: "{{ tool.full_name }}"
+  description: "{{ tool.tagline }}"
+---
+<div class="repo">
+  <div class="repo-main">
+    {{ tool.summary | md | safe }}
+    {%- if tool.features %}
+    <ul>
+      {%- for f in tool.features %}<li>{{ f | mdInline | safe }}</li>{% endfor %}
+    </ul>
+    {%- endif %}
+    {%- if tool.launch and not tool.embed %}<p><a class="button button-primary" href="{{ tool.launch }}">Open {{ tool.name }}</a></p>{% endif %}
+    {%- if tool.credit %}<p class="muted small">{{ tool.credit | mdInline | safe }}</p>{% endif %}
+  </div>
+
+  <aside class="repo-side">
+    {%- if tool.install %}
+    <section>
+      <h3>Install</h3>
+      <div class="code-copy">
+        <code>{{ tool.install }}</code>
+        <button type="button" class="copy" data-copy="{{ tool.install }}" aria-label="Copy install command">Copy</button>
+      </div>
+    </section>
+    {%- endif %}
+    <section>
+      <h3>Links</h3>
+      <ul>
+        {%- if tool.launch %}<li><a href="{{ tool.launch }}">Open in browser</a></li>{% endif %}
+        {%- if tool.docs %}<li><a href="{{ tool.docs }}">Documentation</a></li>{% endif %}
+        {%- if tool.repo %}<li><a href="{{ tool.repo }}">Source code</a></li>{% endif %}
+      </ul>
+    </section>
+    {%- if tool.papers %}
+    <section>
+      <h3>Cite</h3>
+      <ul>
+        {%- for paper in tool.papers %}<li><a href="https://doi.org/{{ paper.doi }}">{{ paper.label }}</a></li>{% endfor %}
+      </ul>
+    </section>
+    {%- endif %}
+    <section>
+      <p class="tags">
+        {%- if tool.language %}<span class="pill">{{ tool.language }}</span>{% endif %}
+        {%- if tool.license %}<span class="pill">{{ tool.license }}</span>{% endif %}
+        {%- if tool.status %}<span class="pill pill-draft">{{ tool.status }}</span>{% endif %}
+      </p>
+    </section>
+  </aside>
+</div>
+
+{%- if tool.figure %}
+<figure class="figure">
+  <a href="{{ tool.figure.src }}"><img src="{{ tool.figure.src }}" alt="{{ tool.figure.alt }}" loading="lazy"></a>
+  {%- if tool.figure.caption %}<figcaption>{{ tool.figure.caption | mdInline | safe }}</figcaption>{% endif %}
+</figure>
+{%- endif %}
+
+{%- if tool.embed %}
+<details class="try-it">
+  <summary>Try it</summary>
+  <iframe data-src="{{ tool.embed.src }}" width="100%" height="{{ tool.embed.height or 640 }}" allow="fullscreen" title="{{ tool.embed.title or tool.name }}" style="border:0"></iframe>
+  {%- if tool.launch %}<p class="small"><a href="{{ tool.launch }}" target="_blank" rel="noopener">Open the full version in a new tab →</a></p>{% endif %}
+</details>
+{%- endif %}
+
+<script>
+  // Load embedded demos only when their panel is first opened.
+  document.querySelectorAll("details.try-it").forEach((panel) => {
+    panel.addEventListener("toggle", () => {
+      const frame = panel.querySelector("iframe[data-src]");
+      if (panel.open && frame) {
+        frame.src = frame.dataset.src;
+        frame.removeAttribute("data-src");
+      }
+    });
+  });
+</script>
+
+<script>
+  document.querySelectorAll("button.copy").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy);
+        btn.textContent = "Copied";
+        setTimeout(() => (btn.textContent = "Copy"), 1500);
+      } catch {}
+    });
+  });
+</script>

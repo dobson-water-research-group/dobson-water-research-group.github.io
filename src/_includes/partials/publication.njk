@@ -1,0 +1,14 @@
+<li class="pub" data-category="{{ pub.category }}" data-people="{{ pub.people | join(' ') }}"{% if not publications.shown[pub.category] %} hidden{% endif %}>
+  <p class="pub-title"><a href="{{ pub.url }}">{{ pub.title | safe }}</a></p>
+  <p class="pub-authors">
+    {%- for a in pub.authors.slice(0, 12) -%}
+      {%- if a.member %}<a class="member" href="/people/#{{ a.member }}">{{ a.name }}</a>{% else %}{{ a.name }}{% endif %}{% if not loop.last %}, {% endif %}
+    {%- endfor %}{% if pub.authors.length > 12 %}, et al.{% endif -%}
+  </p>
+  <p class="pub-meta">
+    {%- if pub.venue %}<span class="pub-venue">{{ pub.venue }}</span>{% endif %}
+    {%- if pub.details %} {{ pub.details }}{% endif %} · {{ pub.year }}
+    {%- if pub.category != "article" %} <span class="pill pill-muted">{{ publications.labels[pub.category] or pub.category }}</span>{% endif %}
+    {%- if pub.oa_url %} <a class="pill pill-oa" href="{{ pub.oa_url }}">Open access</a>{% endif %}
+  </p>
+</li>

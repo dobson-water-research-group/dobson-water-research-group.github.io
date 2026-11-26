@@ -1,0 +1,26 @@
+---
+layout: layouts/base.njk
+---
+{%- set isOpenNow = { status: status, deadline: deadline } | isOpen %}
+<header class="page-header">
+  <p class="eyebrow"><a href="/opportunities/">← Opportunities</a></p>
+  <h1>{{ title }}</h1>
+  <p class="lede">{{ position }}{% if location %} · {{ location }}{% endif %}</p>
+</header>
+<div class="job">
+  <article class="prose">
+    {%- if draft %}<p class="notice">Draft: visible when previewing locally, but not on the live site until you remove <code>draft: true</code>.</p>{% endif %}
+    {%- if not isOpenNow %}<p class="notice">This position is now closed.</p>{% endif %}
+    {{ content | safe }}
+  </article>
+  <aside class="job-side">
+    <dl class="facts facts-stacked">
+      {%- if funding %}<div><dt>Funding</dt><dd>{{ funding }}</dd></div>{% endif %}
+      {%- if start %}<div><dt>Start</dt><dd>{{ start }}</dd></div>{% endif %}
+      {%- if deadline %}<div><dt>Deadline</dt><dd>{{ deadline | date }}</dd></div>{% endif %}
+      {%- if supervisors %}<div><dt>Supervisors</dt><dd>{{ supervisors | join(", ") }}</dd></div>{% endif %}
+    </dl>
+    {%- if apply_url and isOpenNow %}<p><a class="button button-primary" href="{{ apply_url }}">How to apply</a></p>{% endif %}
+    <p class="muted small">Questions? <a href="mailto:{{ site.email }}?subject={{ title | urlencode }}">Email us</a>.</p>
+  </aside>
+</div>
